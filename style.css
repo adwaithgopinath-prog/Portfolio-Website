@@ -295,14 +295,16 @@ img {
     font-family: var(--font-heading);
     font-size: clamp(3rem, 7.5vw, 5.5rem);
     font-weight: 800;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
     display: flex;
     flex-direction: column;
+    overflow: visible;
 }
 
 .hero-line {
     display: block;
+    overflow: visible;
 }
 
 .text-accent {
@@ -311,6 +313,9 @@ img {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     display: inline-block;
+    padding-right: 0.25em;
+    margin-right: -0.25em;
+    overflow: visible;
 }
 
 .intro-line {
