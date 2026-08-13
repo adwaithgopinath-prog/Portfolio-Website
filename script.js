@@ -1,93 +1,106 @@
-// Navbar Scroll Effect
-const navbar = document.getElementById('navbar');
-const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-const navLinks = document.querySelector('.nav-links');
+/**
+ * script.js — Interactive UI & Animation Logic
+ * Portfolio of Adwaith Gopinath
+ */
 
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-});
+document.addEventListener('DOMContentLoaded', () => {
+    // ── 1. Navbar Scroll Blur & State ──────────────────────────────────────────
+    const navbar = document.getElementById('navbar');
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const navLinks = document.querySelector('.nav-links');
 
-// Mobile Menu Toggle
-mobileMenuBtn.addEventListener('click', () => {
-    mobileMenuBtn.classList.toggle('active');
-    navLinks.classList.toggle('active');
-});
-
-// Close mobile menu when link is clicked
-document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-        mobileMenuBtn.classList.remove('active');
-        navLinks.classList.remove('active');
-    });
-});
-
-// Reveal on Scroll Animation
-const revealElements = document.querySelectorAll('.section, .project-card, .skill-category, .stat-card');
-
-const revealOnScroll = (entries, observer) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('reveal-visible');
-            observer.unobserve(entry.target);
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 40) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
         }
     });
-};
 
-const observerOptions = {
-    threshold: 0.15
-};
+    // ── 2. Mobile Menu Toggle ──────────────────────────────────────────────────
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenuBtn.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
 
-const observer = new IntersectionObserver(revealOnScroll, observerOptions);
-
-revealElements.forEach(element => {
-    element.classList.add('reveal-hidden');
-    observer.observe(element);
-});
-
-// Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href');
-        const targetElement = document.querySelector(targetId);
-        
-        if (targetElement) {
-            const navHeight = document.querySelector('.navbar').offsetHeight;
-            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight;
-            
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
+        // Close menu on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuBtn.classList.remove('active');
+                navLinks.classList.remove('active');
             });
+        });
+    }
+
+    // ── 3. Reveal Sections on Scroll (Intersection Observer) ─────────────────
+    const revealSections = document.querySelectorAll('.reveal-section');
+
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.01,
+        rootMargin: '50px 0px 50px 0px'
+    });
+
+    revealSections.forEach(section => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 1.1) {
+            section.classList.add('visible');
+        } else {
+            revealObserver.observe(section);
         }
     });
-});
 
-// Contact Form Feedback (Visual Only)
-const contactForm = document.querySelector('.contact-form');
-if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const btn = contactForm.querySelector('button');
-        const originalText = btn.innerText;
-        
-        btn.innerText = 'Message Sent!';
-        btn.style.background = '#00ff88';
-        btn.disabled = true;
-        
-        setTimeout(() => {
-            btn.innerText = originalText;
-            btn.style.background = '';
-            btn.disabled = false;
-            contactForm.reset();
-        }, 3000);
+    // ── 4. Smooth Anchor Link Scrolling ──────────────────────────────────────
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                const navHeight = navbar ? navbar.offsetHeight : 70;
+                const targetPos = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight;
+
+                window.scrollTo({
+                    top: targetPos,
+                    behavior: 'smooth'
+                });
+            }
+        });
     });
-}
 
-// Developer Console Greeting
-console.log('%c Hi! I am Adwaith Gopinath ', 'background: #00d4ff; color: #fff; font-size: 20px; font-weight: bold; border-radius: 5px; padding: 5px;');
-console.log('%c Engineering student & full stack developer interested in software & hardware. ', 'color: #00d4ff; font-size: 14px;');
+    // ── 5. Contact Form Submission Feedback ──────────────────────────────────
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalContent = submitBtn.innerHTML;
+
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> MESSAGE SENT!';
+            submitBtn.style.background = '#22c55e';
+            submitBtn.style.borderColor = '#22c55e';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                submitBtn.innerHTML = originalContent;
+                submitBtn.style.background = '';
+                submitBtn.style.borderColor = '';
+                submitBtn.disabled = false;
+                contactForm.reset();
+            }, 3500);
+        });
+    }
+
+    // Console Branding
+    console.log('%c ADWAITH GOPINATH ', 'background: #ef4444; color: #fff; font-weight: bold; font-size: 14px; padding: 4px 8px; border-radius: 4px;');
+    console.log('%c ENTC Student & Creative Developer | Portfolio 2026 ', 'color: #ef4444; font-size: 12px;');
+});
